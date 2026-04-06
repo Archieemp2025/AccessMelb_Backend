@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: accessmelb_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: accessmelb
+      POSTGRES_USER: accessmelb_team22
+      POSTGRES_PASSWORD: Team_022_titans
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  postgres_data:
