@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   postgres:
-    image: postgres:16
+    image: imresamu/postgis:16-3.5-bookworm
     container_name: accessmelb_postgres
     restart: unless-stopped
     environment:
@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: accessmelb_team22
       POSTGRES_PASSWORD: Team_022_titans
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
