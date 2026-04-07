@@ -39,8 +39,7 @@ jobs:
          tail -n 1 ~/.ssh/id_rsa
 
          ssh-keygen -l -f ~/.ssh/id_rsa
-         ssh-keyscan -H '${{ secrets.EC2_HOST }}' >> ~/.ssh/known_hosts
-
+         ssh-keyscan -T 30 -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
          
       - name: Deploy DB scripts on EC2
         run: |
