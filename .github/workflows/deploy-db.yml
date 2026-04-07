@@ -1,0 +1,41 @@
+name: Deploy DB changes to EC2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "database/**"
+      - "scripts/**"
+      - ".github/workflows/deploy-db.yml"
+
+jobs:
+  deploy-db:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy DB scripts on EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            set -e
+            cd /home/ubuntu/accessmelb-backend/AccessMelb_Backend
+            git pull origin main
+
+            export DB_NAME=accessmelb
+            export DB_USER=accessmelb_ta22
+            export DB_PASSWORD='${{ secrets.POSTGRES_PASSWORD }}'
+            export DB_HOST=localhost
+            export DB_PORT=5432
+
+            ./scripts/deploy_db.sh
+          EOF
