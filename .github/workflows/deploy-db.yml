@@ -18,13 +18,30 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Set up SSH
+        shell: bash
         run: |
-          mkdir -p ~/.ssh
-          printf '%s' "${{ secrets.EC2_SSH_KEY_B64 }}" | base64 -d > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keygen -y -f ~/.ssh/id_rsa > /dev/null
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+         set -euo pipefail
+         mkdir -p ~/.ssh
 
+         printf '%s' '${{ secrets.EC2_SSH_KEY_B64 }}' \
+          | tr -d '\r\n\t ' \
+          | base64 --decode > ~/.ssh/id_rsa
+
+         chmod 600 ~/.ssh/id_rsa
+
+         echo "Decoded key size:"
+         wc -c ~/.ssh/id_rsa
+
+         echo "First line:"
+         head -n 1 ~/.ssh/id_rsa
+
+         echo "Last line:"
+         tail -n 1 ~/.ssh/id_rsa
+
+         ssh-keygen -l -f ~/.ssh/id_rsa
+         ssh-keyscan -H '${{ secrets.EC2_HOST }}' >> ~/.ssh/known_hosts
+
+         
       - name: Deploy DB scripts on EC2
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
