@@ -1,0 +1,13 @@
+nohup: ignoring input
+INFO:     Started server process [65225]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:47664 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60200 - "GET /destinations HTTP/1.1" 200 OK
+INFO:     101.188.52.165:62674 - "GET / HTTP/1.1" 200 OK
+INFO:     101.188.52.165:62674 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     101.188.52.165:62675 - "GET /docs HTTP/1.1" 200 OK
+INFO:     101.188.52.165:62675 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     101.188.52.165:62700 - "GET /destinations HTTP/1.1" 200 OK
+INFO:     101.188.52.165:62710 - "GET /public-toilets HTTP/1.1" 404 Not Found
