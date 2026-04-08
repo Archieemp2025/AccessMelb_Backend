@@ -6,8 +6,8 @@
 --     created_at TIMESTAMP DEFAULT NOW()
 -- );
 
-DROP TABLE IF EXISTS public_toilet CASCADE;
-DROP TABLE IF EXISTS destination CASCADE;
+-- DROP TABLE IF EXISTS public_toilet CASCADE;
+-- DROP TABLE IF EXISTS destination CASCADE;
 
 CREATE TABLE IF NOT EXISTS destination (
     destination_id SERIAL PRIMARY KEY,
