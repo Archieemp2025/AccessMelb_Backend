@@ -1,0 +1,61 @@
+name: Deploy DB changes to EC2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "database/**"
+      - "scripts/**"
+      - ".github/workflows/deploy-db.yml"
+
+jobs:
+  deploy-db:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up SSH
+        shell: bash
+        run: |
+         set -euo pipefail
+         mkdir -p ~/.ssh
+
+         printf '%s' '${{ secrets.EC2_SSH_KEY_B64 }}' \
+          | tr -d '\r\n\t ' \
+          | base64 --decode > ~/.ssh/id_rsa
+
+         chmod 600 ~/.ssh/id_rsa
+
+         echo "Decoded key size:"
+         wc -c ~/.ssh/id_rsa
+
+         echo "First line:"
+         head -n 1 ~/.ssh/id_rsa
+
+         echo "Last line:"
+         tail -n 1 ~/.ssh/id_rsa
+
+         ssh-keygen -l -f ~/.ssh/id_rsa
+         ssh-keyscan -T 30 -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+         
+      - name: Deploy DB scripts on EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            set -e
+            cd /home/ubuntu/accessmelb-backend/AccessMelb_Backend
+
+            git fetch origin main
+            git checkout main
+            git reset --hard origin/main
+
+            export DB_NAME=accessmelb
+            export DB_USER=accessmelb_ta22
+            export DB_PASSWORD='${{ secrets.POSTGRES_PASSWORD }}'
+            export DB_HOST=localhost
+            export DB_PORT=5432
+
+            ./scripts/deploy_db.sh
+          EOF

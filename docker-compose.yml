@@ -1,19 +1,26 @@
-version: "3.9"
+# ⚠️ DEPRECATED
+# This docker-compose setup was used for local PostgreSQL.
+# We now use PostgreSQL + PostGIS directly on EC2.
+# Do NOT use this for current development.ß
 
-services:
-  postgres:
-    image: postgres:16
-    container_name: accessmelb_postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: accessmelb
-      POSTGRES_USER: accessmelb_team22
-      POSTGRES_PASSWORD: Team_022_titans
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
 
-volumes:
-  postgres_data:
+
+# version: "3.9"
+
+# services:
+#   postgres:
+#     image: postgres:16
+#     container_name: accessmelb_postgres
+#     restart: unless-stopped
+#     environment:
+#       POSTGRES_DB: accessmelb
+#       POSTGRES_USER: accessmelb_team22
+#       POSTGRES_PASSWORD: Team_022_titans
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+# volumes:
+#   postgres_data:
