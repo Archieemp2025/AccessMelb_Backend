@@ -17,7 +17,7 @@ from app.services.otp import plan_journey, transform_itinerary
 router = APIRouter(prefix="/api/v1/journeys", tags=["Journeys"])
 
 
-@router.get("/plan", response_model=JourneyResponse)
+@router.post("/plan", response_model=JourneyResponse)
 async def plan_full_journey(
     request: JourneyPlanRequest,
     session: AsyncSession = Depends(get_session),
