@@ -119,3 +119,64 @@ class JourneyResponse(BaseModel):
     transfers: int
     legs: list[JourneyLeg]
     accessibility_summary: AccessibilitySummary
+
+class FallbackRequest(BaseModel):
+    """Request body for POST /api/v1/journeys/fallback."""
+    destination_id: int = Field(..., ge=1, description="Destination ID from catalog")
+
+class FallbackDestination(BaseModel):
+    """Destination summary for the fallback response."""
+    id: int
+    name: str
+    category: str
+    lat: float
+    lon: float
+
+class FallbackStopInfo(BaseModel):
+    """A nearby accessible stop with transit information."""
+    gtfs_id: str
+    name: str
+    lat: float
+    lon: float
+    mode: Optional[Literal["TRAM", "BUS", "RAIL", "SUBWAY"]] = None
+    wheelchair_boarding: Optional[Literal["POSSIBLE", "NOT_POSSIBLE", "NO_INFORMATION"]] = None
+    parent_station_name: Optional[str] = None
+    routes: list[str] = Field(default_factory=list, description="Short route names serving this stop")
+    distance_metres: int = Field(..., description="Straight-line distance to the destination")
+
+class FallbackWalkingRoute(BaseModel):
+    """Walking route from a stop to the destination."""
+    duration_seconds: int
+    distance_metres: float
+    polyline: str = Field(..., description="Encoded polyline for map rendering")
+
+class FallbackStopWithRoute(BaseModel):
+    """A nearby stop paired with its walking route to the destination."""
+    stop: FallbackStopInfo
+    walking_route: FallbackWalkingRoute
+
+class FallbackAccessibilityWarning(BaseModel):
+    """Warning surfaced in the fallback response.
+
+    Unlike journey warnings, these can be stop-level, journey-level, or
+    about the absence of data (e.g. insufficient stops found).
+    """
+    type: Literal[
+        "INSUFFICIENT_STOPS",
+        "UNKNOWN_STOP_ACCESSIBILITY",
+        "LONG_WALK",
+    ]
+    stop_index: Optional[int] = Field(None, description="Index into stops array when warning is stop-specific")
+    message: str
+
+
+class FallbackAccessibilitySummary(BaseModel):
+    """Overall accessibility picture for the fallback suggestions."""
+    fully_accessible: bool
+    warnings: list[FallbackAccessibilityWarning] = Field(default_factory=list)
+
+class FallbackResponse(BaseModel):
+    """Response body for POST /api/v1/journeys/fallback."""
+    destination: FallbackDestination
+    stops: list[FallbackStopWithRoute]
+    accessibility_summary: FallbackAccessibilitySummary
