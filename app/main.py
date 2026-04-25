@@ -38,7 +38,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import engine
 from app.routes.destinations import router as destinations_router
-from app.routes.journeys import router as journeys_router
 
 
 @asynccontextmanager
@@ -66,4 +65,3 @@ async def root():
     return {"message": "AccessMelb API is running"}
 
 app.include_router(destinations_router)
-app.include_router(journeys_router)
