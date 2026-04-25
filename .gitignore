@@ -1,4 +1,8 @@
-.env
 data/
+<<<<<<< HEAD
 venv/
 otp_files/
+=======
+otp_files/
+.env
+>>>>>>> cf5f4eb (Completed the Google Places API data enrichnment for existing destination API, with API endpoint change and tests.)
