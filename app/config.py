@@ -43,4 +43,4 @@ def get_required_env(key):
 
 # Use DATABASE_URL directly (recommended)
 DATABASE_URL = get_required_env("DATABASE_URL")
-
+GOOGLE_PLACES_API_KEY = get_required_env("GOOGLE_PLACES_API_KEY")
