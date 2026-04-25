@@ -43,5 +43,4 @@ def get_required_env(key):
 
 # Use DATABASE_URL directly (recommended)
 DATABASE_URL = get_required_env("DATABASE_URL")
-OTP_BASE_URL = get_required_env("OTP_BASE_URL")
 
