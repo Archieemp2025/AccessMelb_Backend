@@ -1,0 +1,105 @@
+# Plans a wheelchair-accessible journey from origin to destination.
+#
+# Parameters:
+#   fromLat / fromLon - origin coordinates (user's location)
+#   toLat / toLon - destination coordinates
+#   date - service date in YYYY-MM-DD format (optional, defaults to today)
+#   time - departure time in HH:MM:SS 24h format (optional, defaults to now)
+#
+# Returns the single best accessible journey ranked by OTP's cost function,
+# which weights walking time, transit time, transfers, and accessibility
+# penalties. Parameters below reflect AccessMelb's product decisions:
+#   wheelchair: true - enforces accessible stops and vehicles
+#   walkSpeed: 0.9 - slower than OTP's default for mobility users
+#   walkReluctance: 3.0 - prefer less walking over shorter transit
+#   maxWalkDistance: 800 - cap each walking leg (first mile / last mile)
+#   transferPenalty: 600 - each transfer "costs" 10 minutes in ranking
+#   minTransferTime: 300 - guarantee 5 minutes between transfers
+#   maxTransfers: 2 - limit journey complexity
+#   numItineraries: 1 - single best option (no decision fatigue)
+
+query PlanJourney(
+  $fromLat: Float!
+  $fromLon: Float!
+  $toLat: Float!
+  $toLon: Float!
+  $date: String
+  $time: String
+) {
+  plan(
+    from: { lat: $fromLat, lon: $fromLon }
+    to: { lat: $toLat, lon: $toLon }
+    date: $date
+    time: $time
+    arriveBy: false
+    transportModes: [{ mode: TRANSIT }, { mode: WALK }]
+    wheelchair: true
+    walkSpeed: 0.9
+    walkReluctance: 3.0
+    maxWalkDistance: 800
+    transferPenalty: 600
+    minTransferTime: 300
+    maxTransfers: 2
+    numItineraries: 1
+  ) {
+    itineraries {
+      duration
+      walkDistance
+      startTime
+      endTime
+      legs {
+        mode
+        startTime
+        endTime
+        duration
+        distance
+        from {
+          name
+          lat
+          lon
+          stop {
+            gtfsId
+            wheelchairBoarding
+            platformCode
+            parentStation {
+              name
+            }
+          }
+        }
+        to {
+          name
+          lat
+          lon
+          stop {
+            gtfsId
+            wheelchairBoarding
+            platformCode
+            parentStation {
+              name
+            }
+          }
+        }
+        route {
+          shortName
+          longName
+          agency {
+            name
+          }
+          mode
+        }
+        trip {
+          tripHeadsign
+          wheelchairAccessible
+        }
+        intermediateStops {
+          name
+          gtfsId
+          wheelchairBoarding
+        }
+        legGeometry {
+          points
+        }
+      }
+    }
+  }
+}

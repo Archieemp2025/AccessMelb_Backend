@@ -1,0 +1,47 @@
+# Finds transit stops near a coordinate, ordered by distance.
+#
+# Parameters:
+#   lat / lon - centre point (the destination where we are finding stops near)
+#   radius - search radius in metres
+#   first - maximum number of stops to return
+#
+# Returns all stops within the radius with their accessibility data and
+# the transit routes that serve them. The fallback endpoint uses this to
+# discover candidate stops near a destination before planning walking
+# routes to each.
+
+query StopsByRadius(
+  $lat: Float!
+  $lon: Float!
+  $radius: Int!
+  $first: Int!
+) {
+  stopsByRadius(
+    lat: $lat
+    lon: $lon
+    radius: $radius
+    first: $first
+  ) {
+    edges {
+      node {
+        stop {
+          gtfsId
+          name
+          lat
+          lon
+          wheelchairBoarding
+          vehicleMode
+          parentStation {
+            name
+          }
+          routes {
+            shortName
+            longName
+            mode
+          }
+        }
+        distance
+      }
+    }
+  }
+}

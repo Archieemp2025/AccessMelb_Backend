@@ -1,0 +1,41 @@
+# Plans a walking-only route from a destination to a stop.
+#
+# Used by the fallback endpoint to get the walking polyline between
+# each accessible stop and the venue the user is browsing. Note the
+# direction: `from` is the destination, `to` is the stop. The polyline
+# is visually identical either direction when drawn on a map,
+# so relabelling in the response is better than reversing the geometry.
+#
+# Parameters:
+#   fromLat / fromLon - destination coordinates
+#   toLat / toLon - stop coordinates
+
+query WalkToStop(
+  $fromLat: Float!
+  $fromLon: Float!
+  $toLat: Float!
+  $toLon: Float!
+) {
+  plan(
+    from: { lat: $fromLat, lon: $fromLon }
+    to: { lat: $toLat, lon: $toLon }
+    transportModes: [{ mode: WALK }]
+    wheelchair: true
+    walkSpeed: 0.9
+    walkReluctance: 3.0
+    numItineraries: 1
+  ) {
+    itineraries {
+      duration
+      walkDistance
+      legs {
+        mode
+        duration
+        distance
+        legGeometry {
+          points
+        }
+      }
+    }
+  }
+}
