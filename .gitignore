@@ -1,3 +1,9 @@
-data/
-otp_files/
 .env
+.env.*
+!.env.example
+.DS_Store
+__pycache__/
+*.pyc
+venv/
+data/
+fastapi.log
