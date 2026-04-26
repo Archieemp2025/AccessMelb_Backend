@@ -99,7 +99,7 @@ async def fallback_journey(
         "lon": dest_row.longitude,
     }
 
-    # Try the initial radius first — prefer close stops
+    # Try the initial radius first - prefer close stops
     edges = await find_stops_by_radius(
         lat=dest_row.latitude,
         lon=dest_row.longitude,

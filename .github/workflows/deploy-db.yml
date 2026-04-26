@@ -5,9 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "database/**"
-      - "scripts/**"
-      - ".github/workflows/deploy-db.yml"
+      - "**"
 
 jobs:
   deploy-db:
