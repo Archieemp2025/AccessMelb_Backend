@@ -14,9 +14,10 @@ from app.schemas import (
     NearbyToiletsResponse,
     ToiletSchema,
 )
+from app.services.google_places import fetch_venue_details
+from app.services.google_places_transformer import transform_venue_details
 
-router = APIRouter(prefix="/destinations", tags=["Destinations"])
-
+router = APIRouter(prefix="/api/v1/destinations", tags=["Destinations"])
 
 @router.get("", response_model=DestinationListResponse)
 async def get_destinations(
@@ -85,6 +86,7 @@ async def get_destination(
             Destination.feature_name,
             Destination.category,
             Destination.sub_theme,
+            Destination.place_id,
             func.ST_Y(Destination.location).label("latitude"),
             func.ST_X(Destination.location).label("longitude"),
         ).where(Destination.destination_id == destination_id)
@@ -123,6 +125,13 @@ async def get_destination(
     )
     toilet_rows = toilet_result.all()
 
+    # Fetch live venue details from Google Places.
+    venue_details = None
+    if dest_row.place_id:
+        google_response = await fetch_venue_details(dest_row.place_id)
+        if google_response:
+            venue_details = transform_venue_details(google_response)
+
     return DestinationDetailResponse(
         destination=DestinationSchema(
             destination_id=dest_row.destination_id,
@@ -147,4 +156,5 @@ async def get_destination(
                 for row in toilet_rows
             ],
         ),
+        venue_details=venue_details,
     )

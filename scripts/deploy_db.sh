@@ -31,4 +31,8 @@ if [ -f database/004_seed_data.sql ]; then
   psql -U "$DB_USER" -d "$DB_NAME" -h "$DB_HOST" -p "$DB_PORT" -f database/004_seed_data.sql
 fi
 
+if [ -f database/005_add_place_id_column.sql ]; then
+  psql -U "$DB_USER" -d "$DB_NAME" -h "$DB_HOST" -p "$DB_PORT" -f database/005_add_place_id_column.sql
+fi
+
 echo "Database deployment complete."

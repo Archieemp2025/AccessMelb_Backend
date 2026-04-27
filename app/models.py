@@ -1,6 +1,8 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import String, Integer
 from geoalchemy2 import Geometry
+from typing import Optional
+
 
 
 class Base(DeclarativeBase):
@@ -16,6 +18,7 @@ class Destination(Base):
     sub_theme: Mapped[str] = mapped_column(String(100))
     category: Mapped[str] = mapped_column(String(50))
     location = mapped_column(Geometry("POINT", srid=4326))
+    place_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
 
 class PublicToilet(Base):
