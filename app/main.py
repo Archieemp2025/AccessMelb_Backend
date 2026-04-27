@@ -28,8 +28,6 @@
 #     allow_headers=["*"],
 # )
 
-# app.include_router(destinations_router)
-
 
 from contextlib import asynccontextmanager
 
@@ -39,6 +37,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine
 from app.routes.destinations import router as destinations_router
 from app.routes.journeys import router as journeys_router
+from app.routes.old_destinations import router as old_destinations_router
 
 
 @asynccontextmanager
@@ -67,3 +66,4 @@ async def root():
 
 app.include_router(destinations_router)
 app.include_router(journeys_router)
+app.include_router(old_destinations_router)
