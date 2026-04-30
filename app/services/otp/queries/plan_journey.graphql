@@ -33,7 +33,7 @@ query PlanJourney(
     time: $time
     arriveBy: false
     transportModes: [{ mode: TRANSIT }, { mode: WALK }]
-    wheelchair: true
+    wheelchair: false
     walkSpeed: 0.9
     walkReluctance: 3.0
     maxWalkDistance: 800
