@@ -35,4 +35,8 @@ if [ -f database/005_add_place_id_column.sql ]; then
   psql -U "$DB_USER" -d "$DB_NAME" -h "$DB_HOST" -p "$DB_PORT" -f database/005_add_place_id_column.sql
 fi
 
+if [ -f database/006_create_footpath_steepness.sql ]; then
+  psql -U "$DB_USER" -d "$DB_NAME" -h "$DB_HOST" -p "$DB_PORT" -f database/006_create_footpath_steepness.sql
+fi
+
 echo "Database deployment complete."
