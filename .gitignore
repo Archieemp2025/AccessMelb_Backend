@@ -1,9 +1,7 @@
 .env
 .env.*
-data/
-venv/
 otp_files/
 
-
 docker-compose.local.yml
-.env.ec2.backup
+.env.ec2.backupvenv/
+data/

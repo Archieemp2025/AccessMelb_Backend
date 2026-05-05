@@ -1,5 +1,5 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import String, Integer
+from sqlalchemy import String, Integer, Float
 from geoalchemy2 import Geometry
 from typing import Optional
 
@@ -28,3 +28,13 @@ class PublicToilet(Base):
     name: Mapped[str] = mapped_column(String(255))
     wheelchair_accessible: Mapped[str] = mapped_column(String(10))
     location = mapped_column(Geometry("POINT", srid=4326))
+
+class FootpathSteepness(Base):
+    __tablename__ = "footpath_steepness"
+ 
+    footpath_steepness_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    gradient_percent: Mapped[float] = mapped_column(Float, nullable=False)
+    address: Mapped[str] = mapped_column(String(255), nullable=True)
+    lat: Mapped[float] = mapped_column(Float, nullable=False)
+    lon: Mapped[float] = mapped_column(Float, nullable=False)
+    geom = mapped_column(Geometry("POINT", srid=4326))

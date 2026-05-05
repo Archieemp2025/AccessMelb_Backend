@@ -13,9 +13,12 @@ from app.schemas import (
     DestinationDetailResponse,
     NearbyToiletsResponse,
     ToiletSchema,
+    TerrainResponse,
 )
 from app.services.google_places import fetch_venue_details
 from app.services.google_places_transformer import transform_venue_details
+from app.services.terrain import get_terrain
+
 
 router = APIRouter(prefix="/api/v1/destinations", tags=["Destinations"])
 
@@ -158,3 +161,32 @@ async def get_destination(
         ),
         venue_details=venue_details,
     )
+
+@router.get("/{destination_id}/terrain", response_model=TerrainResponse)
+async def get_destination_terrain(
+    destination_id: int,
+    radius: int = Query(500, ge=100, le=1000),
+    session: AsyncSession = Depends(get_session),
+):
+    dest_result = await session.execute(
+        select(
+            Destination.destination_id,
+            Destination.feature_name,
+            func.ST_Y(Destination.location).label("latitude"),
+            func.ST_X(Destination.location).label("longitude"),
+        ).where(Destination.destination_id == destination_id)
+    )
+    dest_row = dest_result.first()
+ 
+    if not dest_row:
+        raise HTTPException(status_code=404, detail="Destination not found")
+ 
+    return await get_terrain(
+        destination_id=dest_row.destination_id,
+        destination_name=dest_row.feature_name,
+        dest_lat=dest_row.latitude,
+        dest_lon=dest_row.longitude,
+        radius_m=radius,
+        session=session,
+    )
+ 
