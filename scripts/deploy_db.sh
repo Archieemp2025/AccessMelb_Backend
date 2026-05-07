@@ -2,7 +2,7 @@
 set -euo pipefail
 
 DB_NAME="${DB_NAME:-accessmelb}"
-DB_USER="${DB_USER:-accessmelb_ta22}"
+DB_USER="${DB_USER:-accessmelb_team22}"
 DB_HOST="${DB_HOST:-localhost}"
 DB_PORT="${DB_PORT:-5432}"
 
