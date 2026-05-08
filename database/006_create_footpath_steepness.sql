@@ -16,11 +16,11 @@
 
 CREATE TABLE IF NOT EXISTS footpath_steepness (
     footpath_steepness_id SERIAL PRIMARY KEY,
-    gradient_percent      FLOAT        NOT NULL,
-    address               VARCHAR(255),
-    lat                   FLOAT        NOT NULL,
-    lon                   FLOAT        NOT NULL,
-    geom                  geometry(Point, 4326) NOT NULL
+    gradient_percent FLOAT NOT NULL,
+    address VARCHAR(255),
+    lat FLOAT NOT NULL,
+    lon FLOAT NOT NULL,
+    geom geometry(Point, 4326) NOT NULL
 );
 
 COMMENT ON TABLE footpath_steepness IS

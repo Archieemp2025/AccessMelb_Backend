@@ -132,7 +132,7 @@ async def _call_groq(
                             If no location is provided, do not mention location at all and do not say it is unspecified.
 
                             Rules:
-                            - EXACTLY 2 sentences — stop writing after the second sentence
+                            - EXACTLY 2 sentences, stop writing after the second sentence
                             - No percentages or numbers of any kind
                             - When referencing AS 1428.1, say "Australian wheelchair accessibility standard" instead, do not use the code name AS 1428.1
                             - No word "gradient" or "footpath"
