@@ -1,4 +1,4 @@
-"""Transformers between OTP's GraphQL response shape and our API schemas.
+"""Transformers between OTP's GraphQL response shape and the API schemas.
 
 OTP returns camelCase field names (GraphQL convention) and nests data
 a few levels deep. The API uses snake_case (Python convention) and
@@ -149,13 +149,13 @@ def _compute_accessibility_summary(legs: list[dict]) -> dict:
                 warnings.append({
                     "type": "LONG_WALK",
                     "leg_index": idx,
-                    "message": f"This walking leg is {int(distance)}m — near the maximum for an accessible route. Consider whether this distance is manageable.",
+                    "message": f"This travelling leg is {int(distance)}m — near the maximum for an accessible route. Consider whether this distance is manageable.",
                 })
             elif distance >= LONG_WALK_METRES:
                 warnings.append({
                     "type": "LONG_WALK",
                     "leg_index": idx,
-                    "message": f"This walking leg is {int(distance)}m — longer than typical.",
+                    "message": f"This travelling leg is {int(distance)}m — longer than typical.",
                 })
 
         # Transit legs operating as rail replacement buses
@@ -352,14 +352,14 @@ def build_fallback_accessibility_summary(stops: list[dict]) -> dict:
             warnings.append({
                 "type": "LONG_WALK",
                 "stop_index": idx,
-                "message": f"{int(distance)}m walk from {stop['name']} to the "
-                           f"destination — near the maximum for an accessible route.",
+                "message": f"{int(distance)}m travel from {stop['name']} to the "
+                           f"destination - near the maximum for an accessible route.",
             })
         elif distance >= LONG_WALK_METRES:
             warnings.append({
                 "type": "LONG_WALK",
                 "stop_index": idx,
-                "message": f"{int(distance)}m walk from {stop['name']} to the "
+                "message": f"{int(distance)}m travel from {stop['name']} to the "
                            f"destination — longer than typical.",
             })
 
