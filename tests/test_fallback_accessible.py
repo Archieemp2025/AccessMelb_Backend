@@ -32,7 +32,6 @@ from tests.conftest import (
 
 VALID_REQUEST_BODY = {"destination_id": 1}
 
-
 def mock_enrich_fallback_stops(enriched_stops=None, side_effect=None):
     """Patch enrich_fallback_stops at its point of use in the router."""
     mock = AsyncMock()
@@ -98,7 +97,6 @@ def _make_three_enriched_stops(gradients=None):
         for i, (grad, within) in enumerate(gradients)
     ]
     return stops
-
 
 @pytest.mark.asyncio
 async def test_fallback_accessible_returns_200(client):
@@ -200,7 +198,6 @@ async def test_destination_shape(client):
     assert dest["id"] == 1
     assert dest["name"] == "Koorie Heritage Trust Inc"
     assert dest["category"] == "gallery"
-
 
 @pytest.mark.asyncio
 async def test_all_within_standard_no_warning(client):
@@ -440,7 +437,6 @@ async def test_generate_summary_with_no_gradient_data():
 
     assert result is not None
     assert "King St/Lonsdale St" in result
-
 
 @pytest.mark.asyncio
 async def test_exactly_5_percent_is_within_standard():
