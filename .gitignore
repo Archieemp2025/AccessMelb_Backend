@@ -1,9 +1,15 @@
 .env
 .env.*
-data/
-venv/
 otp_files/
-
 
 docker-compose.local.yml
 .env.ec2.backup
+venv/
+.venv/
+database/venv/
+data/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd

@@ -215,3 +215,21 @@ class FallbackResponse(BaseModel):
     stops: list[FallbackStopWithRoute]
     accessibility_summary: FallbackAccessibilitySummary
 
+class GradientDistribution(BaseModel):
+    within_standard_percent: float   # below 5%, within AS 1428.1 Section 5.2
+    outside_standard_percent: float  # above 5%, exceeds AS 1428.1 Section 5.2
+ 
+ 
+class SteepestSection(BaseModel):
+    gradient_percent: float
+    address: Optional[str] # None if address missing in source data
+ 
+ 
+class TerrainResponse(BaseModel):
+    data_available: bool
+    radius_m: int
+    rating: Optional[str]  # "mostly_accessible" | "partially_accessible" | "largely_inaccessible"
+    gradient_distribution: Optional[GradientDistribution]
+    steepest_section: Optional[SteepestSection]
+    summary: Optional[str]
+ 
