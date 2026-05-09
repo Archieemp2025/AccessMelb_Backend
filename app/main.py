@@ -39,6 +39,7 @@ from app.routes.destinations import router as destinations_router
 from app.routes.journeys import router as journeys_router
 from app.routes.old_destinations import router as old_destinations_router
 from app.routes.journeys_accessible import router as accessible_router
+from app.routes.fallback_accessible import router as fallback_accessible_router
 
 
 @asynccontextmanager
@@ -69,3 +70,4 @@ app.include_router(destinations_router)
 app.include_router(journeys_router)
 app.include_router(old_destinations_router)
 app.include_router(accessible_router)
+app.include_router(fallback_accessible_router)
