@@ -33,7 +33,6 @@ _AS1428_THRESHOLD = 5.0
 _BUFFER_METRES = 30
 
 
-# Steepness computation (reuses polyline decoder from route_steepness)
 async def compute_walk_steepness(
     walking_leg: dict,
     session: AsyncSession,
@@ -41,7 +40,7 @@ async def compute_walk_steepness(
     """Compute max gradient along a walking leg's polyline.
 
     Same spatial logic as route_steepness._compute_steepness but
-    defined again to keep the fallback service self-contained
+    defined here to keep the fallback service self-contained
     while reusing the polyline decoder.
 
     Returns max gradient_percent as a float, or None if no data.
@@ -119,29 +118,30 @@ async def generate_walk_summary(
     walk_minutes = max(1, duration_seconds // 60)
     distance_int = int(distance_metres)
 
-    prompt = f"""You are describing a specific walking route from a tram/bus stop to a destination for a wheelchair user in Melbourne. Write exactly 1 sentence that is UNIQUE to this specific route.
+    prompt = f"""You are describing a specific route from a tram/bus stop to a destination for a wheelchair user in Melbourne. Write exactly 1 sentence that is UNIQUE to this specific route.
 
                 Route details:
                 - From: {stop_name}
-                - Distance: {distance_int}m ({walk_minutes} min walk)
+                - Distance: {distance_int}m ({walk_minutes} min travel)
                 - {gradient_line}
 
                 Your sentence MUST include:
                 1. The stop name "{stop_name}"
-                2. How the walk feels in practical terms (short/moderate/long, flat/gentle/steep)
+                2. How the route feels in practical terms (short/moderate/long, flat/gentle/steep)
                 3. If gradient exceeds 5%: name it as a concern and say it may require assistance or extra effort
                 4. If gradient is within 5%: say it is comfortable or straightforward for wheelchair users
 
                 Your sentence MUST NOT include:
                 - Any percentages or numbers
-                - The words "gradient", "footpath", or "AS 1428.1"
-                - Generic phrases like "the walk is manageable", be specific to this route
+                - The words "gradient", "footpath", "AS 1428.1", "walk", or "walking"
+                - Use "travel", "travelling", "route", or "path" instead of "walk" or "walking"
+                - Generic phrases like "the route is manageable", be specific to this route
                 - Any preamble, quotes, or explanation
 
                 Examples of GOOD sentences:
-                - "A short, flat walk from King St/Lonsdale St with smooth surfaces throughout — comfortable for all wheelchair types."
-                - "The walk from Spencer St/La Trobe St is brief and mostly level, making it a straightforward approach for wheelchair users."
-                - "Walking from Lonsdale St/Spencer St involves a steep section that may require assistance for manual wheelchair users."
+                - "A short, flat route from King St/Lonsdale St with smooth surfaces throughout — comfortable for all wheelchair types."
+                - "The path from Spencer St/La Trobe St is brief and mostly level, making it a straightforward approach for wheelchair users."
+                - "Travelling from Lonsdale St/Spencer St involves a steep section that may require assistance for manual wheelchair users."
 
                 Write your sentence now:"""
 
