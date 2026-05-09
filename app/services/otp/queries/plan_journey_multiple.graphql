@@ -1,0 +1,95 @@
+# Plans 3 wheelchair-accessible journeys for steepness comparison.
+#
+# Identical to plan_journey.graphql except numItineraries: 3.
+# The route steepness service compares the last walking leg of each
+# itinerary and selects the one with the most manageable gradient.
+#
+# This query is used exclusively by the /plan-accessible endpoint.
+# The existing /plan endpoint continues to use plan_journey.graphql
+# with numItineraries: 1.
+
+query PlanJourneyMultiple(
+  $fromLat: Float!
+  $fromLon: Float!
+  $toLat: Float!
+  $toLon: Float!
+  $date: String
+  $time: String
+) {
+  plan(
+    from: { lat: $fromLat, lon: $fromLon }
+    to: { lat: $toLat, lon: $toLon }
+    date: $date
+    time: $time
+    arriveBy: false
+    transportModes: [{ mode: TRANSIT }, { mode: WALK }]
+    wheelchair: false
+    walkSpeed: 0.9
+    walkReluctance: 15.0
+    maxWalkDistance: 800
+    transferPenalty: 600
+    minTransferTime: 300
+    maxTransfers: 2
+    numItineraries: 4
+  ) {
+    itineraries {
+      duration
+      walkDistance
+      startTime
+      endTime
+      legs {
+        mode
+        startTime
+        endTime
+        duration
+        distance
+        from {
+          name
+          lat
+          lon
+          stop {
+            gtfsId
+            wheelchairBoarding
+            platformCode
+            parentStation {
+              name
+            }
+          }
+        }
+        to {
+          name
+          lat
+          lon
+          stop {
+            gtfsId
+            wheelchairBoarding
+            platformCode
+            parentStation {
+              name
+            }
+          }
+        }
+        route {
+          shortName
+          longName
+          agency {
+            name
+          }
+          mode
+        }
+        trip {
+          tripHeadsign
+          wheelchairAccessible
+        }
+        intermediateStops {
+          name
+          gtfsId
+          wheelchairBoarding
+        }
+        legGeometry {
+          points
+        }
+      }
+    }
+  }
+}
