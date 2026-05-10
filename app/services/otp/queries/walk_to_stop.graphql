@@ -22,7 +22,7 @@ query WalkToStop(
     transportModes: [{ mode: WALK }]
     wheelchair: true
     walkSpeed: 0.9
-    walkReluctance: 3.0
+    walkReluctance: 15.0
     numItineraries: 1
   ) {
     itineraries {
