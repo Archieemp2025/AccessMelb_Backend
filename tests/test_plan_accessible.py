@@ -34,6 +34,12 @@ VALID_REQUEST_BODY = {
 }
 
 
+def mock_get_toilet_routes(toilets=None):
+    """Patch get_toilet_routes at its source module."""
+    mock = AsyncMock()
+    mock.return_value = toilets if toilets is not None else []
+    return patch("app.services.toilet_routes.get_toilet_routes", mock)
+
 def _make_itinerary(duration: int, last_walk_polyline: str = "d~ueFwllsZ~CxG") -> dict:
     """Build a minimal OTP itinerary with configurable duration and last walk polyline."""
     return {
@@ -160,7 +166,8 @@ async def test_plan_accessible_returns_200(client):
     override_session(mock_destination_lookup())
 
     with mock_fetch_multiple_itineraries(), \
-         mock_compute_steepness([3.2]):
+         mock_compute_steepness([3.2]), \
+         mock_get_toilet_routes():
         response = await client.post(
             "/api/v1/journeys/plan-accessible",
             json=VALID_REQUEST_BODY,
@@ -175,7 +182,8 @@ async def test_plan_accessible_response_shape(client):
     override_session(mock_destination_lookup())
 
     with mock_fetch_multiple_itineraries(), \
-         mock_compute_steepness([3.2]):
+         mock_compute_steepness([3.2]), \
+         mock_get_toilet_routes():
         response = await client.post(
             "/api/v1/journeys/plan-accessible",
             json=VALID_REQUEST_BODY,
@@ -194,7 +202,8 @@ async def test_journey_field_matches_plan_response_shape(client):
     override_session(mock_destination_lookup())
 
     with mock_fetch_multiple_itineraries(), \
-         mock_compute_steepness([3.2]):
+         mock_compute_steepness([3.2]), \
+         mock_get_toilet_routes():
         response = await client.post(
             "/api/v1/journeys/plan-accessible",
             json=VALID_REQUEST_BODY,
@@ -214,7 +223,8 @@ async def test_last_walk_steepness_shape(client):
     override_session(mock_destination_lookup())
 
     with mock_fetch_multiple_itineraries(), \
-         mock_compute_steepness([4.2]):
+         mock_compute_steepness([4.2]), \
+         mock_get_toilet_routes():
         response = await client.post(
             "/api/v1/journeys/plan-accessible",
             json=VALID_REQUEST_BODY,
@@ -223,6 +233,7 @@ async def test_last_walk_steepness_shape(client):
     steepness = response.json()["last_walk_steepness"]
     assert "max_gradient_percent" in steepness
     assert "within_standard" in steepness
+
 
 @pytest.mark.asyncio
 async def test_selects_fastest_when_within_standard(client):
@@ -236,7 +247,8 @@ async def test_selects_fastest_when_within_standard(client):
     ]
 
     with mock_fetch_multiple_itineraries(itineraries), \
-         mock_compute_steepness([3.0, 4.5, 2.1]):
+         mock_compute_steepness([3.0, 4.5, 2.1]), \
+         mock_get_toilet_routes():
         response = await client.post(
             "/api/v1/journeys/plan-accessible",
             json=VALID_REQUEST_BODY,
@@ -262,7 +274,8 @@ async def test_selects_flattest_when_all_exceed_standard(client):
     ]
 
     with mock_fetch_multiple_itineraries(itineraries), \
-         mock_compute_steepness([8.5, 6.2, 7.0]):
+         mock_compute_steepness([8.5, 6.2, 7.0]), \
+         mock_get_toilet_routes():
         response = await client.post(
             "/api/v1/journeys/plan-accessible",
             json=VALID_REQUEST_BODY,
@@ -289,7 +302,8 @@ async def test_prefers_within_standard_over_faster_exceeding(client):
     ]
 
     with mock_fetch_multiple_itineraries(itineraries), \
-         mock_compute_steepness([7.0, 3.2]):
+         mock_compute_steepness([7.0, 3.2]), \
+         mock_get_toilet_routes():
         response = await client.post(
             "/api/v1/journeys/plan-accessible",
             json=VALID_REQUEST_BODY,
@@ -313,7 +327,8 @@ async def test_no_steepness_data_returns_fastest(client):
     ]
 
     with mock_fetch_multiple_itineraries(itineraries), \
-         mock_compute_steepness([None, None]):
+         mock_compute_steepness([None, None]), \
+         mock_get_toilet_routes():
         response = await client.post(
             "/api/v1/journeys/plan-accessible",
             json=VALID_REQUEST_BODY,
@@ -326,6 +341,7 @@ async def test_no_steepness_data_returns_fastest(client):
     assert data["all_exceed_standard"] is False
     assert data["warning"] is None
 
+
 @pytest.mark.asyncio
 async def test_warning_includes_threshold_and_gradient(client):
     """The warning text mentions both the standard threshold and the selected gradient."""
@@ -334,7 +350,8 @@ async def test_warning_includes_threshold_and_gradient(client):
     itineraries = [_make_itinerary(duration=2000)]
 
     with mock_fetch_multiple_itineraries(itineraries), \
-         mock_compute_steepness([9.3]):
+         mock_compute_steepness([9.3]), \
+         mock_get_toilet_routes():
         response = await client.post(
             "/api/v1/journeys/plan-accessible",
             json=VALID_REQUEST_BODY,
@@ -353,7 +370,8 @@ async def test_no_warning_when_within_standard(client):
     itineraries = [_make_itinerary(duration=2000)]
 
     with mock_fetch_multiple_itineraries(itineraries), \
-         mock_compute_steepness([3.5]):
+         mock_compute_steepness([3.5]), \
+         mock_get_toilet_routes():
         response = await client.post(
             "/api/v1/journeys/plan-accessible",
             json=VALID_REQUEST_BODY,
@@ -401,6 +419,7 @@ async def test_reject_zero_destination_id(client):
         json={"origin": {"lat": -37.8008, "lon": 144.9033}, "destination_id": 0},
     )
     assert response.status_code == 422
+
 
 @pytest.mark.asyncio
 async def test_destination_not_found_returns_404(client):
@@ -452,6 +471,7 @@ async def test_otp_unavailable_returns_503(client):
 
     assert response.status_code == 503
 
+
 @pytest.mark.asyncio
 async def test_polyline_decoder_returns_correct_coordinates():
     """The polyline decoder produces valid lon/lat pairs from a real OTP polyline."""
@@ -475,6 +495,7 @@ async def test_polyline_decoder_empty_string():
 
     points = _decode_polyline("")
     assert points == []
+
 
 @pytest.mark.asyncio
 async def test_extract_last_walk_leg_finds_final_walk():
@@ -523,7 +544,8 @@ async def test_single_itinerary_within_standard(client):
     itineraries = [_make_itinerary(duration=2000)]
 
     with mock_fetch_multiple_itineraries(itineraries), \
-         mock_compute_steepness([4.0]):
+         mock_compute_steepness([4.0]), \
+         mock_get_toilet_routes():
         response = await client.post(
             "/api/v1/journeys/plan-accessible",
             json=VALID_REQUEST_BODY,
@@ -544,7 +566,8 @@ async def test_single_itinerary_exceeds_standard(client):
     itineraries = [_make_itinerary(duration=2000)]
 
     with mock_fetch_multiple_itineraries(itineraries), \
-         mock_compute_steepness([8.0]):
+         mock_compute_steepness([8.0]), \
+         mock_get_toilet_routes():
         response = await client.post(
             "/api/v1/journeys/plan-accessible",
             json=VALID_REQUEST_BODY,
